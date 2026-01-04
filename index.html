@@ -8,6 +8,102 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Bubblegum+Sans&amp;display=swap" rel="stylesheet">
   <style>
+
+  :root {
+  --title-size: clamp(2.5rem, 6vw, 4.5rem);
+  --question-size: clamp(1.2rem, 3vw, 2rem);
+  --balloon-w: clamp(90px, 15vw, 160px);
+  --balloon-h: clamp(120px, 20vw, 210px);
+}
+
+
+/* Mode Proyektor */
+body.projector-mode.fullscreen {
+  cursor: none;
+}
+
+body.projector-mode #question-display {
+  font-size: 2.3rem;
+}
+
+body.projector-mode #balloons-grid button {
+  width: 190px;
+  height: 250px;
+}
+
+body.projector-mode footer {
+  opacity: 0.6;
+}
+
+#feedback-content {
+  word-break: break-word;
+}
+
+    /* ======================
+   RESPONSIVE BALLOON FIX
+====================== */
+/* ======================
+   RESPONSIVE SYSTEM FINAL
+====================== */
+
+/* ===== LAYAR PENDEK (Laptop / Proyektor) ===== */
+@media (max-height: 800px) {
+  #question-display { font-size: 1.5rem; }
+  #balloons-grid { gap: 1.5rem; }
+  .balloon-1,.balloon-2,.balloon-3,.balloon-4 { transform: scale(0.9); }
+}
+
+@media (max-height: 700px) {
+  .balloon-1,.balloon-2,.balloon-3,.balloon-4 { transform: scale(0.8); }
+  #balloons-container { top: 170px; }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+  #game-title { font-size: var(--title-size); }
+  #welcome-text { font-size: 1.3rem !important; }
+  #start-btn {
+    font-size: 1.5rem !important;
+    padding: 1rem 2.5rem !important;
+  }
+
+  #question-display { font-size: var(--question-size) }
+  #balloons-grid { gap: 1rem; }
+
+  #balloons-grid button {
+    width: var(--balloon-w);
+    height: var(--balloon-h);
+  }
+
+  #feedback-content {
+    font-size: 2rem !important;
+    white-space: normal !important;
+  }
+}
+
+/* ===== MOBILE NORMAL ===== */
+@media (max-width: 640px) {
+  #balloons-container { top: 180px; }
+}
+
+/* ===== TABLET ===== */
+@media (min-width: 641px) and (max-width: 1024px) {
+  #balloons-grid button {
+    width: 130px;
+    height: 170px;
+  }
+}
+
+/* ===== LAPTOP / PROYEKTOR ===== */
+@media (min-width: 1025px) {
+  #balloons-grid button {
+    width: 160px;
+    height: 210px;
+  }
+}
+
+
+
     html, body {
     margin: 0;
     padding: 0;
@@ -24,6 +120,22 @@
       box-sizing: border-box;
       font-family: 'Bubblegum Sans', cursive;
     }
+
+     /* Wrong answer dim effect */
+    .balloon-dim {
+      opacity: 0.25;
+      filter: grayscale(40%);
+      transform: scale(0.9);
+      transition: all 0.4s ease;
+    }
+
+    .balloon-correct-highlight {
+      opacity: 1 !important;
+      transform: scale(1.25) !important;
+      box-shadow: 0 0 50px rgba(34,197,94,0.9) !important;
+      z-index: 10;
+    }
+
     
     .title-font {
       font-family: 'Fredoka One', cursive;
@@ -137,32 +249,12 @@
     }
 
      /* LAPTOP HEIGHT FIX */
-@media (max-height: 800px) {
-  #question-display {
-    font-size: 1.5rem;
-  }
 
-  #balloons-grid {
-    gap: 1.5rem;
-  }
-
-  .balloon-1, .balloon-2, .balloon-3, .balloon-4 {
-    transform: scale(0.9);
-  }
-}
-
-@media (max-height: 700px) {
-  .balloon-1, .balloon-2, .balloon-3, .balloon-4 {
-    transform: scale(0.8);
-  }
-}
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
 
  
-
-
 
  </head>
  <!-- AUDIO SYSTEM -->
@@ -191,6 +283,10 @@
 
  <body class="min-h-screen bg-gradient-to-b from-sky-400 via-sky-300 to-blue-200 overflow-y-auto">
   <div id="app" class="w-full h-full overflow-auto"><!-- Start Screen -->
+    <button onclick="toggleProjectorMode()"
+  class="fixed top-4 right-4 z-50 bg-black/50 text-white px-4 py-2 rounded-xl">
+  🎥 Projector
+</button>
    <div id="start-screen" class="w-full h-full bg-gradient-to-b from-sky-300 via-pink-200 to-purple-300 relative overflow-hidden"><!-- Decorative clouds -->
     <div class="cloud-1 absolute top-10 left-10 text-6xl opacity-80">
      ☁️
@@ -519,7 +615,7 @@
         balloonContainer.className = 'relative flex flex-col items-center';
         
         const balloon = document.createElement('button');
-        balloon.className = `${balloonClasses[index]} relative w-32 h-40 sm:w-40 sm:h-48 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-200 border-4 border-white cursor-pointer`;
+        balloon.className = `${balloonClasses[index]} relative w-32 h-40 sm:w-40 sh:h-48 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-200 border-4 border-white cursor-pointer`;
         balloon.style.backgroundColor = question.colors[index];
         balloon.style.boxShadow = `0 10px 30px rgba(0,0,0,0.3)`;
         
@@ -576,17 +672,20 @@
         sfxWrong.play();
 
         wrongAnswers++;
+
+        // Semua balon diredupkan
+        allBalloons.forEach(b => b.classList.add("balloon-dim"));
+
+        // Balon yang dipilih makin pudar
+        balloonElement.style.transform = "scale(0.6) rotate(20deg)";
+        balloonElement.style.opacity = "0.15";
+
+        // Jawaban BENAR disorot
+        const correctBalloon = allBalloons[question.correct];
+        correctBalloon.classList.remove("balloon-dim");
+        correctBalloon.classList.add("balloon-correct-highlight");
         
-        // Wrong balloon deflate
-        balloonElement.style.transform = 'scale(0.5) rotate(20deg)';
-        balloonElement.style.opacity = '0.3';
-        balloonElement.style.transition = 'all 0.5s ease-out';
-        
-        // Show correct balloon
-        allBalloons[question.correct].style.transform = 'scale(1.2)';
-        allBalloons[question.correct].style.boxShadow = '0 0 40px rgba(34, 197, 94, 0.8)';
-        
-        showFeedback('💥 Oops! Try again! 💥', '#ef4444', false);
+        showFeedback('💥 Oops! The correct answer is THIS one!! 💥', '#ef4444', false);
       }
       
       updateHUD();
@@ -598,7 +697,7 @@
           currentQuestion = (currentQuestion + 1) % shuffledQuestions.length;
           loadQuestion();
         }
-      }, 2000);
+      }, isCorrect ? 1800 : 3000);
     }
     
     function createConfetti(element) {
@@ -633,14 +732,17 @@
     function showFeedback(message, color, isCorrect) {
       const feedback = document.getElementById('feedback-message');
       const content = document.getElementById('feedback-content');
-      
+
       content.textContent = message;
       content.style.color = color;
       content.style.textShadow = `4px 4px 0px ${isCorrect ? '#fbbf24' : '#991b1b'}`;
-      content.className = 'title-font text-4xl sm:text-6xl font-bold p-6 rounded-3xl bounce-in whitespace-nowrap';
-      
+
+      content.className =
+        "title-font text-3xl sm:text-5xl font-bold p-6 rounded-3xl bounce-in whitespace-normal text-center leading-snug max-w-full";
+
       feedback.classList.remove('hidden');
     }
+
     
     function endGame() {
         
@@ -778,6 +880,7 @@ audioBtn.addEventListener("click", () => {
   sfxCorrect.muted = isMuted;
   sfxWrong.muted = isMuted;
   sfxPop.muted = isMuted;
+  
 
 
   audioBtn.textContent = isMuted ? "🔇" : "🔊";
@@ -785,4 +888,36 @@ audioBtn.addEventListener("click", () => {
   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b8aeae4b2639cde',t:'MTc2NzUzMTYxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
+ <script>
+function toggleProjectorMode() {
+  const body = document.body;
+
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().then(() => {
+      body.classList.add("projector-mode");
+      body.classList.add("fullscreen");
+    });
+  } else {
+    document.exitFullscreen().then(() => {
+      body.classList.remove("projector-mode");
+      body.classList.remove("fullscreen");
+      body.style.cursor = "default";
+    });
+  }
+}
+</script>
+
+<script>
+  document.addEventListener("fullscreenchange", () => {
+  const body = document.body;
+
+  if (!document.fullscreenElement) {
+    body.classList.remove("projector-mode", "fullscreen");
+    body.style.cursor = "default";
+  }
+});
+</script>
+
+
+ 
 </html>
