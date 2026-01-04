@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balloon Pop English</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Bubblegum+Sans&amp;display=swap" rel="stylesheet">
+  <style>
+    html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+    background: linear-gradient(to bottom, #7dd3fc, #93c5fd, #bfdbfe);
+    }
+
+    * {
+    box-sizing: border-box;
+    }
+
+    body {
+      box-sizing: border-box;
+      font-family: 'Bubblegum Sans', cursive;
+    }
+    
+    .title-font {
+      font-family: 'Fredoka One', cursive;
+    }
+    
+    /* Cloud animations */
+    @keyframes float-cloud-1 {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(30px) translateY(-10px); }
+    }
+    
+    @keyframes float-cloud-2 {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(-25px) translateY(15px); }
+    }
+    
+    @keyframes float-cloud-3 {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(20px) translateY(-15px); }
+    }
+    
+    .cloud-1 { animation: float-cloud-1 8s ease-in-out infinite; }
+    .cloud-2 { animation: float-cloud-2 10s ease-in-out infinite; }
+    .cloud-3 { animation: float-cloud-3 12s ease-in-out infinite; }
+    
+    /* Star twinkle */
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+    
+    .star-twinkle {
+      animation: twinkle 2s ease-in-out infinite;
+    }
+    
+    /* Balloon floating animations */
+    @keyframes float-balloon-1 {
+      0%, 100% { transform: translateY(0) translateX(0) rotate(-3deg); }
+      25% { transform: translateY(-20px) translateX(10px) rotate(2deg); }
+      50% { transform: translateY(-10px) translateX(-10px) rotate(-2deg); }
+      75% { transform: translateY(-25px) translateX(5px) rotate(3deg); }
+    }
+    
+    @keyframes float-balloon-2 {
+      0%, 100% { transform: translateY(0) translateX(0) rotate(3deg); }
+      25% { transform: translateY(-25px) translateX(-8px) rotate(-2deg); }
+      50% { transform: translateY(-15px) translateX(12px) rotate(2deg); }
+      75% { transform: translateY(-20px) translateX(-5px) rotate(-3deg); }
+    }
+    
+    @keyframes float-balloon-3 {
+      0%, 100% { transform: translateY(0) translateX(0) rotate(-2deg); }
+      25% { transform: translateY(-18px) translateX(15px) rotate(3deg); }
+      50% { transform: translateY(-28px) translateX(-12px) rotate(-3deg); }
+      75% { transform: translateY(-15px) translateX(8px) rotate(2deg); }
+    }
+    
+    @keyframes float-balloon-4 {
+      0%, 100% { transform: translateY(0) translateX(0) rotate(2deg); }
+      25% { transform: translateY(-22px) translateX(-10px) rotate(-3deg); }
+      50% { transform: translateY(-12px) translateX(15px) rotate(3deg); }
+      75% { transform: translateY(-30px) translateX(-8px) rotate(-2deg); }
+    }
+    
+    .balloon-1 { animation: float-balloon-1 4s ease-in-out infinite; }
+    .balloon-2 { animation: float-balloon-2 4.5s ease-in-out infinite; }
+    .balloon-3 { animation: float-balloon-3 5s ease-in-out infinite; }
+    .balloon-4 { animation: float-balloon-4 4.2s ease-in-out infinite; }
+    
+    /* Pop effect */
+    @keyframes pop-explosion {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.8; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+    
+    .pop-effect {
+      animation: pop-explosion 0.5s ease-out;
+    }
+    
+    /* Confetti */
+    @keyframes confetti-fall {
+    0% { transform: translate(0,0) rotate(0deg); opacity:1; }
+    100% { transform: translate(var(--tx), var(--ty)) rotate(360deg); opacity:0; }
+    }
+
+    
+    .confetti {
+      animation: confetti-fall 1s ease-out;
+    }
+    
+    /* Bounce in */
+    @keyframes bounce-in {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .bounce-in {
+      animation: bounce-in 0.6s ease-out;
+    }
+    
+    /* Hearts float */
+    @keyframes float-heart {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
+    }
+    
+    .float-heart {
+      animation: float-heart 2s ease-out;
+    }
+
+     /* LAPTOP HEIGHT FIX */
+@media (max-height: 800px) {
+  #question-display {
+    font-size: 1.5rem;
+  }
+
+  #balloons-grid {
+    gap: 1.5rem;
+  }
+
+  .balloon-1, .balloon-2, .balloon-3, .balloon-4 {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-height: 700px) {
+  .balloon-1, .balloon-2, .balloon-3, .balloon-4 {
+    transform: scale(0.8);
+  }
+}
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+
+ 
+
+
+
+ </head>
+ <!-- AUDIO SYSTEM -->
+<audio id="bgm" loop>
+  <source src="audio/bgm.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="sfx-correct">
+  <source src="audio/correct.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="sfx-wrong">
+  <source src="audio/wrong.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="sfx-pop">
+  <source src="audio/pop.mp3" type="audio/mpeg">
+</audio>
+
+<!-- COPYRIGHT -->
+<div class="fixed bottom-3 left-4 z-50 text-base sm:text-lg md:text-xl text-white font-bold opacity-90" style="text-shadow:2px 2px 4px rgba(0,0,0,0.7);">
+  © Designed By : St. Hanurah Spd., Gr.
+</div>
+
+
+
+ <body class="min-h-screen bg-gradient-to-b from-sky-400 via-sky-300 to-blue-200 overflow-y-auto">
+  <div id="app" class="w-full h-full overflow-auto"><!-- Start Screen -->
+   <div id="start-screen" class="w-full h-full bg-gradient-to-b from-sky-300 via-pink-200 to-purple-300 relative overflow-hidden"><!-- Decorative clouds -->
+    <div class="cloud-1 absolute top-10 left-10 text-6xl opacity-80">
+     ☁️
+    </div>
+    <div class="cloud-2 absolute top-32 right-20 text-8xl opacity-70">
+     ☁️
+    </div>
+    <div class="cloud-3 absolute bottom-40 left-32 text-7xl opacity-60">
+     ☁️
+    </div>
+    <div class="absolute top-20 right-40 text-3xl star-twinkle">
+     ⭐
+    </div>
+    <div class="absolute bottom-60 right-60 text-4xl star-twinkle" style="animation-delay: 0.5s;">
+     ✨
+    </div>
+    <div class="absolute top-60 left-60 text-3xl star-twinkle" style="animation-delay: 1s;">
+     🌟
+    </div>
+    <div class="flex items-center justify-center h-full p-4">
+     <div class="max-w-3xl text-center bounce-in">
+      <div class="mb-6">
+       <div class="text-8xl mb-4">
+        🎈
+       </div>
+       <h1 id="game-title" class="title-font text-6xl sm:text-8xl font-bold mb-4" style="color: #ff1493; text-shadow: 4px 4px 0px #ffd700, 8px 8px 0px #ff69b4;">Balloon Pop English!</h1>
+      </div>
+      <div class="bg-white bg-opacity-90 rounded-3xl p-8 shadow-2xl border-8 border-yellow-300 mb-8">
+       <div class="text-5xl mb-4">
+        🎯 🎈 🎉
+       </div>
+       <p id="welcome-text" class="text-2xl sm:text-3xl font-bold text-purple-600 mb-6">Pop the balloon with the RIGHT answer! Get 10 questions correct to win! 🏆</p>
+       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xl">
+        <div class="bg-gradient-to-br from-pink-200 to-pink-300 p-4 rounded-2xl border-4 border-pink-400">
+         <div class="text-4xl mb-2">
+          🎈
+         </div>
+         <div class="font-bold text-pink-700">
+          Pop Balloons!
+         </div>
+        </div>
+        <div class="bg-gradient-to-br from-blue-200 to-blue-300 p-4 rounded-2xl border-4 border-blue-400">
+         <div class="text-4xl mb-2">
+          ⭐
+         </div>
+         <div class="font-bold text-blue-700">
+          Score Points!
+         </div>
+        </div>
+        <div class="bg-gradient-to-br from-green-200 to-green-300 p-4 rounded-2xl border-4 border-green-400">
+         <div class="text-4xl mb-2">
+          🏆
+         </div>
+         <div class="font-bold text-green-700">
+          Win Prizes!
+         </div>
+        </div>
+       </div>
+      </div><button id="start-btn" class="bg-gradient-to-r from-green-400 via-yellow-300 to-pink-400 hover:from-green-500 hover:via-yellow-400 hover:to-pink-500 text-white font-bold text-3xl py-6 px-16 rounded-full border-8 border-white shadow-2xl transform hover:scale-110 transition-all duration-200" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"> 🚀 START GAME! 🚀 </button>
+      <div class="mb-6">
+    <label class="text-2xl font-bold text-purple-700">Choose Session:</label>
+    <select id="session-select"
+    class="mt-3 px-6 py-3 rounded-full text-xl border-4 border-purple-400">
+    <option value="1">Session 1 – Was / Were</option>
+    <option value="2">Session 2 – Past Verb</option>
+    <option value="3">Session 3 – Mixed Past Tense</option>
+    </select>
+    </div>
+
+     </div>
+    </div>
+   </div><!-- Game Screen -->
+   <button id="audio-toggle"
+     class="fixed bottom-6 right-6 z-50 bg-white rounded-full p-4 shadow-xl text-3xl">
+        🔊
+    </button>
+
+   <div id="game-screen" class="hidden w-full min-h-screen bg-gradient-to-b from-sky-400 via-sky-300 to-blue-200 relative overflow-hidden">
+    <!-- Background decorations -->
+    <div class="cloud-1 absolute top-5 left-5 text-5xl opacity-70 pointer-events-none">
+     ☁️
+    </div>
+    <div class="cloud-2 absolute top-20 right-10 text-6xl opacity-60 pointer-events-none">
+     ☁️
+    </div>
+    <div class="cloud-3 absolute bottom-20 left-20 text-5xl opacity-60 pointer-events-none">
+     ☁️
+    </div>
+    <div class="absolute top-10 right-60 text-3xl star-twinkle pointer-events-none">
+     ⭐
+    </div>
+    <div class="absolute bottom-40 left-60 text-2xl star-twinkle pointer-events-none" style="animation-delay: 0.7s;">
+     ✨
+    </div><!-- Score HUD -->
+    <div class="fixed top-4 left-4 right-4 z-50 pointer-events-none">
+     <div class="flex justify-between items-start max-w-6xl mx-auto">
+      <div class="bg-white bg-opacity-95 rounded-3xl p-4 border-6 border-pink-400 shadow-xl pointer-events-auto">
+       <div class="text-pink-600 font-bold text-lg mb-1">
+        ⭐ SCORE
+       </div>
+       <div id="score-display" class="text-5xl font-bold text-purple-600">
+        0 / 10
+       </div>
+      </div>
+      <div class="bg-white bg-opacity-95 rounded-3xl p-4 border-6 border-blue-400 shadow-xl pointer-events-auto">
+       <div class="text-blue-600 font-bold text-lg mb-1">
+        📊 PROGRESS
+        </div>
+        <div id="lives-display" class="text-5xl font-bold text-blue-600">
+         0 / 10
+        </div>
+      </div>
+     </div>
+    </div><!-- Question Box -->
+    <div class="absolute top-24 sm:top-32 left-0 right-0 z-40 px-4 pointer-events-none">
+     <div class="max-w-4xl mx-auto">
+      <div class="bg-white bg-opacity-95 rounded-3xl p-6 border-8 border-yellow-300 shadow-2xl">
+       <div class="text-yellow-600 font-bold text-xl mb-2">
+        🎯 QUESTION:
+       </div>
+       <div id="question-display" class="title-font text-2xl sm:text-4xl font-bold text-purple-700"></div>
+      </div>
+     </div>
+    </div><!-- Balloons Area -->
+    <div id="balloons-container" class="absolute inset-x-0 bottom-0 top-[220px] sm:top-[260px] flex items-center justify-center p-4 pb-16">
+     <div id="balloons-grid" class="grid grid-cols-2 gap-8 sm:gap-12 max-w-4xl w-full"></div>
+    </div><!-- Feedback Message -->
+    <div id="feedback-message" class="hidden absolute bottom-10 left-0 right-0 z-50 px-4 pointer-events-none">
+     <div class="max-w-2xl mx-auto text-center">
+      <div id="feedback-content" class="title-font text-4xl sm:text-6xl font-bold p-6 rounded-3xl"></div>
+     </div>
+    </div>
+   </div>
+   <!-- Results Screen -->
+<div id="results-screen"
+ class="hidden w-full min-h-screen overflow-y-auto
+        flex items-center justify-center py-12">
+
+  <!-- Dekorasi -->
+  <div class="cloud-1 absolute top-10 left-10 text-6xl opacity-80">☁️</div>
+  <div class="cloud-2 absolute top-32 right-20 text-8xl opacity-70">☁️</div>
+  <div class="absolute top-20 right-40 text-4xl star-twinkle">⭐</div>
+
+  <!-- CONTENT -->
+  <div class="max-w-3xl text-center bounce-in z-10">
+
+    <div id="trophy-display" class="text-9xl mb-6"></div>
+
+    <h2 id="result-title"
+        class="title-font text-5xl sm:text-7xl font-bold mb-4"></h2>
+
+    <div id="session-result"
+         class="text-xl sm:text-2xl font-bold mb-4 text-purple-700"></div>
+
+    <!-- RESULT BOX -->
+    <div id="result-box"
+         class="bg-white bg-opacity-95 rounded-3xl p-8 shadow-2xl border-8 mb-8">
+
+      <div id="final-score" class="text-7xl font-bold mb-4"></div>
+      <p id="result-message"
+         class="text-2xl sm:text-3xl font-bold mb-6"></p>
+
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-green-200 p-6 rounded-2xl border-4 border-green-400">
+          <div class="font-bold text-xl">✅ Correct</div>
+          <div id="correct-count" class="text-5xl font-bold">0</div>
+        </div>
+
+        <div class="bg-red-200 p-6 rounded-2xl border-4 border-red-400">
+          <div class="font-bold text-xl">❌ Wrong</div>
+          <div id="wrong-count" class="text-5xl font-bold">0</div>
+        </div>
+      </div>
+
+      <!-- SESSION SUMMARY -->
+      <div class="bg-purple-100 rounded-2xl p-4 border-4 border-purple-300">
+        <div class="text-purple-700 font-bold text-xl mb-2">
+          📊 Session Summary
+        </div>
+        <div id="session-summary"
+             class="text-lg text-purple-800 space-y-1"></div>
+      </div>
+    </div>
+
+    <!-- ✅ BUTTONS (SEKARANG PASTI MUNCUL) -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <button id="play-again-btn"
+        class="bg-gradient-to-r from-green-400 to-blue-400
+               hover:from-green-500 hover:to-blue-500
+               text-white font-bold text-2xl py-5 px-10
+               rounded-full border-6 border-white shadow-xl
+               transform hover:scale-110 transition-all">
+        🔄 Play Again!
+      </button>
+
+      <button id="home-btn"
+        class="bg-gradient-to-r from-purple-400 to-pink-400
+               hover:from-purple-500 hover:to-pink-500
+               text-white font-bold text-2xl py-5 px-10
+               rounded-full border-6 border-white shadow-xl
+               transform hover:scale-110 transition-all">
+        🏠 Home
+      </button>
+    </div>
+
+  </div>
+</div>
+
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      game_title: "Balloon Pop English!",
+      welcome_text: "Answer all questions by popping the correct balloon! 🎯",
+      start_button: "🚀 START GAME! 🚀"
+    };
+
+        const questionBank = {
+        1: [ // SESSION 1 - WAS / WERE
+            { question: "I ___ happy yesterday 😊", options: ["am","was","were","is"], correct: 1, colors:["#ff6b6b","#4ecdc4","#ffe66d","#a29bfe"] },
+            { question: "They ___ at school yesterday 🏫", options:["is","was","were","are"], correct:2, colors:["#54a0ff","#ff9ff3","#6bcf7f","#ffd93d"] },
+            { question: "She ___ sick last night 🤒", options:["is","was","were","are"], correct:1, colors:["#feca57","#ee5a6f","#48dbfb","#a29bfe"] },
+            { question: "We ___ late yesterday ⏰", options:["are","were","was","is"], correct:1, colors:["#1dd1a1","#ff6348","#ffd93d","#54a0ff"] },
+            { question: "The cats ___ hungry 🐱", options:["was","were","is","am"], correct:1, colors:["#ff9ff3","#54a0ff","#feca57","#48dbfb"] },
+            { question: "I ___ tired last night 😴", options:["am","were","was","is"], correct:2, colors:["#ffd93d","#6bcf7f","#ee5a6f","#a29bfe"] },
+            { question: "He ___ absent yesterday ❌", options:["is","was","were","are"], correct:1, colors:["#ff6348","#1dd1a1","#ffd93d","#5f27cd"] },
+            { question: "They ___ noisy last class 🔊", options:["is","was","were","are"], correct:2, colors:["#48dbfb","#ff9ff3","#54a0ff","#feca57"] },
+            { question: "My bag ___ heavy 🎒", options:["is","were","was","are"], correct:2, colors:["#6bcf7f","#ee5a6f","#a29bfe","#ff9ff3"] },
+            { question: "She ___ my best friend ❤️", options:["is","were","was","are"], correct:2, colors:["#1dd1a1","#ff6348","#ffd93d","#54a0ff"] }
+        ],
+
+        2: [ // SESSION 2 - VERB 2
+            { question:"I ___ to school yesterday 🏫", options:["go","went","gone","going"], correct:1, colors:["#ff6b6b","#4ecdc4","#ffe66d","#a29bfe"] },
+            { question:"She ___ a cake 🍰", options:["eat","eats","ate","eating"], correct:2, colors:["#54a0ff","#ff9ff3","#6bcf7f","#ffd93d"] },
+            { question:"They ___ football ⚽", options:["play","played","plays","playing"], correct:1, colors:["#feca57","#ee5a6f","#48dbfb","#a29bfe"] },
+            { question:"We ___ TV last night 📺", options:["watch","watched","watches","watching"], correct:1, colors:["#1dd1a1","#ff6348","#ffd93d","#54a0ff"] },
+            { question:"He ___ a bird 🐦", options:["see","saw","seen","seeing"], correct:1, colors:["#ff9ff3","#54a0ff","#feca57","#48dbfb"] },
+            { question:"I ___ my homework 📚", options:["do","did","does","doing"], correct:1, colors:["#ffd93d","#6bcf7f","#ee5a6f","#a29bfe"] },
+            { question:"She ___ me yesterday 👋", options:["call","called","calls","calling"], correct:1, colors:["#ff6348","#1dd1a1","#ffd93d","#5f27cd"] },
+            { question:"We ___ rice 🍚", options:["eat","ate","eaten","eating"], correct:1, colors:["#48dbfb","#ff9ff3","#54a0ff","#feca57"] },
+            { question:"They ___ happy news 📰", options:["hear","heard","hears","hearing"], correct:1, colors:["#6bcf7f","#ee5a6f","#a29bfe","#ff9ff3"] },
+            { question:"He ___ a bike 🚲", options:["ride","rode","rides","riding"], correct:1, colors:["#1dd1a1","#ff6348","#ffd93d","#54a0ff"] }
+        ],
+
+        3: [ // SESSION 3 - MIXED
+            { question:"I ___ late yesterday ⏰", options:["am","was","were","is"], correct:1, colors:["#ff6b6b","#4ecdc4","#ffe66d","#a29bfe"] },
+            { question:"She ___ to school yesterday 🏫", options:["go","went","goes","going"], correct:1, colors:["#54a0ff","#ff9ff3","#6bcf7f","#ffd93d"] },
+            { question:"They ___ hungry 🍔", options:["was","were","is","am"], correct:1, colors:["#feca57","#ee5a6f","#48dbfb","#a29bfe"] },
+            { question:"He ___ a movie 🎬", options:["see","saw","seen","seeing"], correct:1, colors:["#1dd1a1","#ff6348","#ffd93d","#54a0ff"] },
+            { question:"We ___ homework 📘", options:["do","did","does","doing"], correct:1, colors:["#ff9ff3","#54a0ff","#feca57","#48dbfb"] },
+            { question:"I ___ sick yesterday 🤒", options:["am","was","were","is"], correct:1, colors:["#ffd93d","#6bcf7f","#ee5a6f","#a29bfe"] },
+            { question:"She ___ a cake 🍰", options:["make","made","makes","making"], correct:1, colors:["#ff6348","#1dd1a1","#ffd93d","#5f27cd"] },
+            { question:"They ___ football ⚽", options:["play","played","plays","playing"], correct:1, colors:["#48dbfb","#ff9ff3","#54a0ff","#feca57"] },
+            { question:"He ___ tired 😴", options:["is","was","were","am"], correct:1, colors:["#6bcf7f","#ee5a6f","#a29bfe","#ff9ff3"] },
+            { question:"We ___ happy 😊", options:["is","was","were","am"], correct:2, colors:["#1dd1a1","#ff6348","#ffd93d","#54a0ff"] }
+        ]
+        };
+
+    
+    let currentQuestion = 0;
+    let score = 0;
+    let correctAnswers = 0;
+    let wrongAnswers = 0;
+    let questionsAsked = 0;
+    let shuffledQuestions = [];
+    
+    function showScreen(screenId) {
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('results-screen').classList.add('hidden');
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    let selectedSession = null;
+    
+    let sessionSummary = {
+    1: { played: 0, bestScore: 0 },
+    2: { played: 0, bestScore: 0 },
+    3: { played: 0, bestScore: 0 }
+    };
+    
+    function startGame() {
+    selectedSession = document.getElementById("session-select").value;
+
+    currentQuestion = 0;
+    score = 0;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    questionsAsked = 0;
+
+    shuffledQuestions = [...questionBank[selectedSession]]
+        .sort(() => Math.random() - 0.5);
+
+    showScreen('game-screen');
+    updateHUD();
+    loadQuestion();
+    }
+
+
+    
+    function updateHUD() {
+    document.getElementById('score-display').textContent = `${score} / 10`;
+    document.getElementById('lives-display').textContent = `${questionsAsked} / 10`;
+    }
+
+    
+    function loadQuestion() {
+      if (questionsAsked >= 10) {
+        endGame();
+        return;
+      }
+      
+      const question = shuffledQuestions[currentQuestion];
+      document.getElementById('question-display').textContent = question.question;
+      document.getElementById('feedback-message').classList.add('hidden');
+      
+      const grid = document.getElementById('balloons-grid');
+      grid.innerHTML = '';
+      
+      const balloonClasses = ['balloon-1', 'balloon-2', 'balloon-3', 'balloon-4'];
+      
+      question.options.forEach((option, index) => {
+        const balloonContainer = document.createElement('div');
+        balloonContainer.className = 'relative flex flex-col items-center';
+        
+        const balloon = document.createElement('button');
+        balloon.className = `${balloonClasses[index]} relative w-32 h-40 sm:w-40 sm:h-48 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-200 border-4 border-white cursor-pointer`;
+        balloon.style.backgroundColor = question.colors[index];
+        balloon.style.boxShadow = `0 10px 30px rgba(0,0,0,0.3)`;
+        
+        const text = document.createElement('div');
+        text.className = 'absolute inset-0 flex items-center justify-center text-white font-bold text-lg sm:text-xl p-4 text-center';
+        text.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
+        text.textContent = option;
+        
+        const string = document.createElement('div');
+        string.className = 'absolute w-0.5 bg-white opacity-50';
+        string.style.height = '40px';
+        string.style.top = '100%';
+        string.style.left = '50%';
+        string.style.transform = 'translateX(-50%)';
+        
+        balloon.appendChild(text);
+        balloon.appendChild(string);
+        balloon.onclick = () => popBalloon(index, balloon);
+        
+        balloonContainer.appendChild(balloon);
+        grid.appendChild(balloonContainer);
+      });
+    }
+    
+    function popBalloon(index, balloonElement) {
+     sfxPop.currentTime = 0;
+     sfxPop.play();
+
+      const question = shuffledQuestions[currentQuestion];
+      const isCorrect = index === question.correct;
+      
+      questionsAsked++;
+      
+      // Disable all balloons
+      const allBalloons = document.querySelectorAll('#balloons-grid button');
+      allBalloons.forEach(b => b.onclick = null);
+      
+      if (isCorrect) {
+        sfxCorrect.currentTime = 0;
+        sfxCorrect.play();
+
+        score++;
+        correctAnswers++;
+        
+        // Correct pop effect
+        balloonElement.classList.add('pop-effect');
+        balloonElement.style.opacity = '0';
+        
+        createConfetti(balloonElement);
+        showFeedback('🎉 Amazing! 🎉', '#10b981', true);
+        
+      } else {
+        sfxWrong.currentTime = 0;
+        sfxWrong.play();
+
+        wrongAnswers++;
+        
+        // Wrong balloon deflate
+        balloonElement.style.transform = 'scale(0.5) rotate(20deg)';
+        balloonElement.style.opacity = '0.3';
+        balloonElement.style.transition = 'all 0.5s ease-out';
+        
+        // Show correct balloon
+        allBalloons[question.correct].style.transform = 'scale(1.2)';
+        allBalloons[question.correct].style.boxShadow = '0 0 40px rgba(34, 197, 94, 0.8)';
+        
+        showFeedback('💥 Oops! Try again! 💥', '#ef4444', false);
+      }
+      
+      updateHUD();
+      
+      setTimeout(() => {
+        if (questionsAsked >= 10) {
+          endGame();
+        } else {
+          currentQuestion = (currentQuestion + 1) % shuffledQuestions.length;
+          loadQuestion();
+        }
+      }, 2000);
+    }
+    
+    function createConfetti(element) {
+      const rect = element.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      const emojis = ['⭐', '✨', '🌟', '💫', '🎊', '🎉'];
+      
+      for (let i = 0; i < 15; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti fixed text-3xl pointer-events-none';
+        confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        confetti.style.left = centerX + 'px';
+        confetti.style.top = centerY + 'px';
+        confetti.style.zIndex = '9999';
+        
+        const angle = (Math.PI * 2 * i) / 15;
+        const distance = 100 + Math.random() * 100;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+        
+        confetti.style.setProperty('--tx', tx + 'px');
+        confetti.style.setProperty('--ty', ty + 'px');
+        
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => confetti.remove(), 1000);
+      }
+    }
+    
+    function showFeedback(message, color, isCorrect) {
+      const feedback = document.getElementById('feedback-message');
+      const content = document.getElementById('feedback-content');
+      
+      content.textContent = message;
+      content.style.color = color;
+      content.style.textShadow = `4px 4px 0px ${isCorrect ? '#fbbf24' : '#991b1b'}`;
+      content.className = 'title-font text-4xl sm:text-6xl font-bold p-6 rounded-3xl bounce-in whitespace-nowrap';
+      
+      feedback.classList.remove('hidden');
+    }
+    
+    function endGame() {
+        
+    const sessionMap = {
+    1: "Session 1 – Was / Were",
+    2: "Session 2 – Past Verb",
+    3: "Session 3 – Mixed Past Tense"
+    };
+
+    // Update summary
+    sessionSummary[selectedSession].played++;
+    if (score > sessionSummary[selectedSession].bestScore) {
+    sessionSummary[selectedSession].bestScore = score;
+    }
+
+    // Show session name
+    document.getElementById("session-result").textContent =
+    "📘 " + sessionMap[selectedSession];
+
+      showScreen('results-screen');
+      
+      document.getElementById('final-score').textContent = `${score} / 10`;
+      document.getElementById('correct-count').textContent = correctAnswers;
+      document.getElementById('wrong-count').textContent = wrongAnswers;
+      
+      const resultBox = document.getElementById('result-box');
+      
+      if (score >= 9) {
+        document.getElementById('trophy-display').textContent = '🏆🎉🏆';
+        document.getElementById('result-title').textContent = 'SUPER STAR!';
+        document.getElementById('result-title').style.color = '#eab308';
+        document.getElementById('result-title').style.textShadow = '4px 4px 0px #dc2626, 8px 8px 0px #16a34a';
+        document.getElementById('result-message').textContent = 'WOW! You are AMAZING! Perfect score! 🌟';
+        document.getElementById('result-message').style.color = '#16a34a';
+        resultBox.style.borderColor = '#fbbf24';
+      } else if (score >= 7) {
+        document.getElementById('trophy-display').textContent = '🌟😊🌟';
+        document.getElementById('result-title').textContent = 'GREAT JOB!';
+        document.getElementById('result-title').style.color = '#3b82f6';
+        document.getElementById('result-title').style.textShadow = '4px 4px 0px #8b5cf6';
+        document.getElementById('result-message').textContent = 'Awesome work! You did great! 🎈';
+        document.getElementById('result-message').style.color = '#3b82f6';
+        resultBox.style.borderColor = '#3b82f6';
+      } else if (score >= 5) {
+        document.getElementById('trophy-display').textContent = '👍💪👍';
+        document.getElementById('result-title').textContent = 'GOOD TRY!';
+        document.getElementById('result-title').style.color = '#f59e0b';
+        document.getElementById('result-title').style.textShadow = '4px 4px 0px #ec4899';
+        document.getElementById('result-message').textContent = 'Nice! Keep practicing! You can do it! 💪';
+        document.getElementById('result-message').style.color = '#f59e0b';
+        resultBox.style.borderColor = '#f59e0b';
+      } else {
+        document.getElementById('trophy-display').textContent = '📚🌈📚';
+        document.getElementById('result-title').textContent = 'KEEP GOING!';
+        document.getElementById('result-title').style.color = '#8b5cf6';
+        document.getElementById('result-title').style.textShadow = '4px 4px 0px #ec4899';
+        document.getElementById('result-message').textContent = 'Don\'t give up! Try again! You\'ll get better! 🌈';
+        document.getElementById('result-message').style.color = '#8b5cf6';
+        resultBox.style.borderColor = '#8b5cf6';
+      }
+
+    document.getElementById("session-summary").innerHTML = `
+    Session 1 – Was / Were : Played ${sessionSummary[1].played}x | Best ${sessionSummary[1].bestScore}/10<br>
+    Session 2 – Past Verb : Played ${sessionSummary[2].played}x | Best ${sessionSummary[2].bestScore}/10<br>
+    Session 3 – Mixed Past : Played ${sessionSummary[3].played}x | Best ${sessionSummary[3].bestScore}/10
+    `;
+    }
+    
+    // Event listeners
+    document.getElementById('start-btn').onclick = startGame;
+    document.getElementById('play-again-btn').onclick = startGame;
+    document.getElementById('home-btn').onclick = () => showScreen('start-screen');
+    
+    async function onConfigChange(config) {
+      document.getElementById('game-title').textContent = config.game_title || defaultConfig.game_title;
+      document.getElementById('welcome-text').textContent = config.welcome_text || defaultConfig.welcome_text;
+      const startBtnText = config.start_button || defaultConfig.start_button;
+      document.getElementById('start-btn').textContent = startBtnText;
+    }
+    
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+    
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["game_title", config.game_title || defaultConfig.game_title],
+        ["welcome_text", config.welcome_text || defaultConfig.welcome_text],
+        ["start_button", config.start_button || defaultConfig.start_button]
+      ]);
+    }
+    
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+
+    }
+     // =======================
+// AUDIO SYSTEM
+// =======================
+const bgm = document.getElementById("bgm");
+const sfxCorrect = document.getElementById("sfx-correct");
+const sfxWrong = document.getElementById("sfx-wrong");
+const sfxPop = document.getElementById("sfx-pop");
+const audioBtn = document.getElementById("audio-toggle");
+
+let isMuted = false;
+
+// Volume default
+bgm.volume = 0.3;
+sfxCorrect.volume = 0.6;
+sfxWrong.volume = 0.6;
+sfxPop.volume = 0.5;
+
+// Play BGM after first user interaction
+document.addEventListener("click", function playBGMOnce() {
+  bgm.play().catch(()=>{});
+  document.removeEventListener("click", playBGMOnce);
+});
+
+// Toggle mute
+audioBtn.addEventListener("click", () => {
+  isMuted = !isMuted;
+
+  bgm.muted = isMuted;
+  sfxCorrect.muted = isMuted;
+  sfxWrong.muted = isMuted;
+  sfxPop.muted = isMuted;
+
+
+  audioBtn.textContent = isMuted ? "🔇" : "🔊";
+});
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b8aeae4b2639cde',t:'MTc2NzUzMTYxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+</html>
