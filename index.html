@@ -16,8 +16,6 @@
   --balloon-h: clamp(120px, 20vw, 210px);
 }
 
-
-
 /* Mode Proyektor */
 body.projector-mode.fullscreen {
   cursor: none;
@@ -37,9 +35,6 @@ body.projector-mode footer {
   word-break: break-word;
 }
 
-    /* ======================
-   RESPONSIVE BALLOON FIX
-====================== */
 /* ======================
    RESPONSIVE SYSTEM FINAL
 ====================== */
@@ -260,8 +255,6 @@ body.projector-mode footer {
   70%  { transform: scale(2.2); opacity: 0.6; filter: blur(2px); }
   100% { transform: scale(3); opacity: 0; filter: blur(6px); }
 }
-
-
     /* ======================
    SMART TV 75 INCH (4K)
 ====================== */
@@ -301,17 +294,6 @@ body.projector-mode footer {
   #balloons-grid button div {
     font-size: 2.4rem !important;
   }
-
-  #balloons-grid button {
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.25),
-    0 0 18px rgba(255,255,255,0.35);
-  }
-
-  #balloons-grid button:hover {
-    filter: brightness(1.2) saturate(1.4);
-  }
-
 
   /* SCORE & PROGRESS */
   #score-display,
@@ -678,7 +660,6 @@ body::before {
         ]
         };
 
-    
     let currentQuestion = 0;
     let score = 0;
     let correctAnswers = 0;
@@ -701,7 +682,6 @@ body::before {
       backBtn.classList.add("hidden");
     }
   }
-
 
     let selectedSession = null;
     
@@ -748,9 +728,6 @@ body::before {
   document.getElementById("back-btn").classList.add("hidden");
 }
 
-
-
-    
     function updateHUD() {
     document.getElementById('score-display').textContent = `${score} / 10`;
     document.getElementById('lives-display').textContent = `${questionsAsked} / 10`;
@@ -905,7 +882,6 @@ body::before {
       feedback.classList.remove('hidden');
     }
 
-    
     function endGame() {
         
     const sessionMap = {
@@ -1045,8 +1021,6 @@ audioBtn.addEventListener("click", () => {
   sfxWrong.muted = isMuted;
   sfxPop.muted = isMuted;
   
-
-
   audioBtn.textContent = isMuted ? "🔇" : "🔊";
 });
   </script>
@@ -1081,7 +1055,4 @@ function toggleProjectorMode() {
   }
 });
 </script>
-
-
- 
 </html>
